@@ -9,7 +9,7 @@ const connectDB = require("./config/db");
 
 //load the confin
 
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: "./config/config.env" })
 
 //googleOAUTH20
 require("./config/passport")(passport);
