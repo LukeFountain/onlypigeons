@@ -1,13 +1,18 @@
-const path = require('path')
+const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const exphbs = require("express-handlebars");
+const passport = require("passport");
+const session = require("express-session");
 const connectDB = require("./config/db");
 
 //load the confin
 
 dotenv.config({ path: "./config/config.env" });
+
+//googleOAUTH20
+require("./config/passport")(passport);
 
 connectDB();
 
@@ -19,14 +24,29 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // handlebars templating engine
-app.engine('.hbs', exphbs ({ defaultLayout: 'main', extname: '.hbs'}))
-app.set('view engine', ".hbs")
+app.engine(".hbs", exphbs({ defaultLayout: "main", extname: ".hbs" }));
+app.set("view engine", ".hbs");
 
-//static folder 
-app.use(express.static(path.join(__dirname, 'public')))
+//sessions
+app.use(
+  session({
+    secret: "pigeons",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
-//routes 
-app.use('/', require('./routes/index'))
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+//static folder
+app.use(express.static(path.join(__dirname, "public")));
+
+//routes
+app.use("/", require("./routes/index"));
+app.use("/auth", require("./routes/auth"));
+
 
 const PORT = process.env.PORT || 3000;
 
