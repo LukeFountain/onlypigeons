@@ -1,10 +1,12 @@
 const path = require("path");
 const express = require("express");
+const mongoose = require("mongoose")
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const exphbs = require("express-handlebars");
 const passport = require("passport");
 const session = require("express-session");
+const MongoDbStore = require('connect-mongo');
 const connectDB = require("./config/db");
 
 //load the confin
@@ -33,6 +35,9 @@ app.use(
     secret: "pigeons",
     resave: false,
     saveUninitialized: false,
+    store: MongoDbStore.create({
+      mongoUrl: process.env.MONGO_URI
+    })
   })
 );
 
@@ -56,3 +61,4 @@ app.listen(
     `server is running in ${process.env.NODE_ENV} mode on port ${PORT}`
   )
 );
+
